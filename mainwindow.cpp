@@ -9,6 +9,8 @@
 
 #include <QPainter>
 
+#include <QProgressBar>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -118,3 +120,49 @@ void MainWindow::on_hsMoveTerrain_valueChanged(int value) {
     ui->dsbMoveTerrain->setValue(value);
 }
 
+void MainWindow::on_pushButton_clicked() {
+    QDialog dlg(this);
+    dlg.setWindowTitle(tr("Moving terrain..."));
+    QProgressBar pgBar;
+    pgBar.setMaximum(ui->lwSelectedFiles->count());
+    QVBoxLayout *layout = new QVBoxLayout(&dlg);
+    layout->addWidget(&pgBar);
+    dlg.setLayout(layout);
+
+    dlg.show();
+
+    for(int i = 0; i < ui->lwSelectedFiles->count(); i++) {
+        runTile(ui->lwSelectedFiles->item(i)->toolTip(), i);
+        qApp->processEvents();
+        pgBar.setValue(i + 1);
+    }
+
+    dlg.hide();
+    QMessageBox::information(this, tr("Finished"), tr("Finished successfully!"));
+}
+
+void MainWindow::runTile(const QString &filePath, const int &index) {
+    QFileInfo fi(filePath);
+    MapTerrain t(this, filePath);
+    if(!t.load()) {
+        QMessageBox::critical(this, tr("Couldn't read terrain file"), tr("<p><b>Couldn't read terrain file %1:</b></p><p>%2</p>").arg(fi.fileName(), t.errorString()));
+        ui->lwSelectedFiles->item(index)->setForeground(Qt::red);
+        return;
+    }
+
+    if(ui->cbCreateBackup->isChecked()) {
+        if(!t.createBackup()) {
+            QMessageBox::critical(this, tr("Couldn't create backup file"), tr("<p><b>Couldn't create backup file %1:</b></p><p>%2</p>").arg(fi.fileName(), t.errorString()));
+            ui->lwSelectedFiles->item(index)->setForeground(Qt::red);
+            return;
+        }
+    }
+
+    if(!t.save(ui->dsbMoveTerrain->value())) {
+        QMessageBox::critical(this, tr("Couldn't modify file"), tr("<p><b>Couldn't create modified file %1:</b></p><p>%2</p>").arg(fi.fileName(), t.errorString()));
+        ui->lwSelectedFiles->item(index)->setForeground(Qt::red);
+        return;
+    }
+
+    ui->lwSelectedFiles->item(index)->setForeground(Qt::darkGreen);
+}

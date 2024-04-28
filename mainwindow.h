@@ -26,8 +26,10 @@ private slots:
     void refreshPreview();
 
     void on_dsbMoveTerrain_valueChanged(double arg1);
-
     void on_hsMoveTerrain_valueChanged(int value);
+    void on_pushButton_clicked();
+
+    void runTile(const QString &filePath, const int &index);
 
 private:
     Ui::MainWindow *ui;
