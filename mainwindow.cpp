@@ -1,9 +1,13 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include "MapTerrain.h"
+
 #include <QMessageBox>
 #include <QFile>
 #include <QFileDialog>
+
+#include <QPainter>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -68,10 +72,40 @@ void MainWindow::refreshPreview() {
         return;
     }
 
+    MapTerrain t(this, ui->lwSelectedFiles->item(0)->toolTip());
+    if(!t.load()) {
+        QMessageBox::warning(this, tr("Loading preview"), tr("<p><b>Couldn't load preivew:</b></p><p>%1</p>").arg(t.errorString()));
+    }
+
     QPixmap pixmap(244, 244);
     pixmap.fill(Qt::black);
 
-    // draw preview here
+
+    float originalArray[61][61];
+    float newTerrain[61][61];
+
+    for(int i = 0; i < 61; ++i) {
+        for(int j = 0; j < 61; ++j) {
+            originalArray[i][j] = t.value(i * 61 + j);
+        }
+    }
+
+    for (int i = 0; i < 61; ++i) {
+        for (int j = 0; j < 61; ++j) {
+            newTerrain[61 - 1 - j][i] = originalArray[i][j];
+        }
+    }
+
+    for(int i = 0; i < 61; ++i) {
+        for(int j = 0; j < 61; ++j) {
+            float colorValue = newTerrain[i][j] * (1 / t.maximalValue()) * 255;
+
+            QPainter painter(&pixmap);
+            painter.setPen(Qt::NoPen);
+            painter.setBrush(QColor(colorValue, colorValue, colorValue));
+            painter.drawRect(i * 4, j * 4, 4, 4);
+        }
+    }
 
     ui->lPreview->setPixmap(pixmap);
 }

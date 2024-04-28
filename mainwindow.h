@@ -23,8 +23,6 @@ private slots:
     void on_pbRemoveSelectedFiles_clicked();
     void on_pbRemoveAllFiles_clicked();
 
-
-
     void refreshPreview();
 
     void on_dsbMoveTerrain_valueChanged(double arg1);
