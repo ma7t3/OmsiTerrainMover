@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include <QSettings>
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
@@ -16,7 +18,21 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_pbSelectFiles_clicked();
+    void on_pbRemoveSelectedFiles_clicked();
+    void on_pbRemoveAllFiles_clicked();
+
+
+
+    void refreshPreview();
+
+    void on_dsbMoveTerrain_valueChanged(double arg1);
+
+    void on_hsMoveTerrain_valueChanged(int value);
+
 private:
     Ui::MainWindow *ui;
+    QSettings settings;
 };
 #endif // MAINWINDOW_H

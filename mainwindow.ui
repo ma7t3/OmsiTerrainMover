@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>739</width>
-    <height>528</height>
+    <width>804</width>
+    <height>555</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -62,7 +62,11 @@
           </layout>
          </item>
          <item>
-          <widget class="QListWidget" name="lwSelectedFiles"/>
+          <widget class="QListWidget" name="lwSelectedFiles">
+           <property name="sortingEnabled">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -71,8 +75,8 @@
        <widget class="QGroupBox" name="gbPreview">
         <property name="minimumSize">
          <size>
-          <width>250</width>
-          <height>250</height>
+          <width>300</width>
+          <height>300</height>
          </size>
         </property>
         <property name="title">
@@ -129,8 +133,17 @@
              <property name="maximum">
               <number>1000</number>
              </property>
+             <property name="pageStep">
+              <number>50</number>
+             </property>
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="tickPosition">
+              <enum>QSlider::TicksAbove</enum>
+             </property>
+             <property name="tickInterval">
+              <number>50</number>
              </property>
             </widget>
            </item>
@@ -177,7 +190,7 @@ Tiles</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>739</width>
+     <width>804</width>
      <height>22</height>
     </rect>
    </property>
