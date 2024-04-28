@@ -26,8 +26,9 @@ bool MapTerrain::load() {
     _min = 0;
     _max = 0;
 
-    for(int i = 0; i < 3721; i++) {
+    for(int i = 0; i < 3722; i++) {
         if(s.atEnd()) {
+            f.close();
             _errorString = tr("unexpeted end of file");
             return false;
         }
@@ -43,22 +44,26 @@ bool MapTerrain::load() {
             _max = val;
     }
 
+    f.close();
     return true;
 }
 
 bool MapTerrain::createBackup() {
     QFileInfo fi(filePath);
-    QDir backupDir = fi.dir();
+    QDir backupDir(fi.dir().path() + "/TerrainMover_Backup");
 
     if(!backupDir.exists()) {
-        if(!backupDir.mkdir("TerrainMover_Backup")) {
+        if(!backupDir.mkpath(backupDir.path())) {
             _errorString = tr("Couldn't create backup directory");
             return false;
         }
     }
 
-    if(!QFile::copy(filePath, fi.filePath() + "/TerrainMover_Backup/" + fi.fileName())) {
-        _errorString = tr("Couldn't create backup");
+    QFile f(filePath);
+
+    QString targetPath = fi.path() + "/TerrainMover_Backup/" + fi.fileName();
+    if(!f.rename(targetPath)) {
+        _errorString = f.errorString();
         return false;
     }
 
@@ -69,8 +74,8 @@ bool MapTerrain::save(const float &offset) {
     QFile f(filePath);
 
     if(!f.open(QFile::WriteOnly)) {
-        return false;
         _errorString = f.errorString();
+        return false;
     }
 
     QDataStream s(&f);
@@ -83,6 +88,8 @@ bool MapTerrain::save(const float &offset) {
         else
             s << values[i] + offset;
     }
+
+    f.close();
 
     return true;
 }
